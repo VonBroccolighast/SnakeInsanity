@@ -17,6 +17,8 @@ import static snakeinsanity.Direction.UP;
 public class Snake {
      private ArrayList<Point> body;
      private Direction direction = Direction.RIGHT;
+     private String string;
+  //   private final Point point;
     
      {    
          body = new ArrayList<>();
@@ -55,7 +57,7 @@ public class Snake {
          }
          getBody().add(0, new Point (getHead().x + x, getHead().y + y));
          //delete tail
-         getBody().remove(getBody().size() - 1);
+        getBody().remove(getBody().size() - 1);
      }
      public Point getHead(){
          return getBody().get(0);
@@ -88,6 +90,21 @@ public class Snake {
      */
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    /**
+     * @return the string
+     */
+    public String getString() {
+      //  JOptionPane.
+        return string;
+    }
+
+    /**
+     * @param string the string to set
+     */
+    public void setString(String string) {
+        this.string = string;
     }
     
 }
