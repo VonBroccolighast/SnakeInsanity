@@ -30,6 +30,7 @@ class SnakeEnvironment extends Environment {
     private ArrayList<Point> portal;
     private double speed = 0;
     private double moveCounter = speed;
+    
 
     public SnakeEnvironment() {
     }
@@ -49,7 +50,7 @@ class SnakeEnvironment extends Environment {
 
         this.grid.setColor(Color.GREEN);
         this.grid.setColumns(55);
-        this.grid.setRows(35);
+        this.grid.setRows(33);
         this.grid.setCellHeight(15);
         this.grid.setCellWidth(15);
         this.grid.setPosition(new Point(50, 75));
@@ -59,10 +60,26 @@ class SnakeEnvironment extends Environment {
         this.apples.add(getRandomGridLocation());
         this.apples.add(getRandomGridLocation());
         this.apples.add(getRandomGridLocation());
+        this.apples.add(getRandomGridLocation());
+        this.apples.add(getRandomGridLocation());
 
         this.poisonBottle = new ArrayList<Point>();
         this.poisonBottle.add(getRandomGridLocation());
         this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        
 
         this.portal = new ArrayList<Point>();
         this.portal.add(new Point(18, 20));
@@ -110,8 +127,8 @@ class SnakeEnvironment extends Environment {
     public void keyPressedHandler(KeyEvent e) {
 
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            this.score += 1;
-        } else if (e.getKeyCode() == KeyEvent.VK_W) {
+           this.moveCounter = 0;
+        } if (e.getKeyCode() == KeyEvent.VK_W) {
             snake.setDirection(Direction.UP);
             snake.move();
         } else if (e.getKeyCode() == KeyEvent.VK_S) {
@@ -144,13 +161,13 @@ class SnakeEnvironment extends Environment {
                     GraphicsPalette.drawApple(graphics, this.grid.getCellPosition(this.apples.get(i)), this.grid.getCellSize());
                 }
             }
-            
+
             if (this.poisonBottle != null) {
                 for (int i = 0; i < this.poisonBottle.size(); i++) {
                     GraphicsPalette.drawBomb(graphics, this.grid.getCellPosition(this.poisonBottle.get(i)), this.grid.getCellSize(), Color.BLACK);
                 }
             }
-            
+
             if (this.portal != null) {
                 for (int i = 0; i < this.portal.size(); i++) {
                     GraphicsPalette.enterPortal(graphics, this.grid.getCellPosition(this.portal.get(i)), this.grid.getCellSize(), Color.BLACK);
@@ -183,9 +200,11 @@ class SnakeEnvironment extends Environment {
 
         for (int i = 0; i < this.apples.size(); i++) {
             if (snake.getHead().equals(this.apples.get(i))) {
-                System.out.println("Apple eaten!");
-                this.score++;
-                //      this.apples.get(i) = this.apples.add(getRandomGridLocation());
+             this.score++;
+             snake.grow(2);
+             this.apples.get(i).x = (int) (Math.random() * this.grid.getColumns());
+             this.apples.get(i).y = (int) (Math.random() * this.grid.getRows());
+             System.out.println("Apple eaten!");
             }
         }
 
@@ -193,6 +212,9 @@ class SnakeEnvironment extends Environment {
             if (snake.getHead().equals(this.poisonBottle.get(i))) {
                 String bombDeath = JOptionPane.showInputDialog("BOOOOOMMMMM!!!!");
                 this.score--;
+                this.poisonBottle.get(i).x = (int) (Math.random() * this.grid.getColumns());
+                this.poisonBottle.get(i).y = (int) (Math.random() * this.grid.getRows());
+     
             }
         }
     }
