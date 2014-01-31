@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
  */
 class SnakeEnvironment extends Environment {
 
+    private GameState gameState = GameState.PAUSED;
     private Grid grid;
     private int score = 0;
     private Snake snake;
@@ -30,7 +31,6 @@ class SnakeEnvironment extends Environment {
     private ArrayList<Point> portal;
     private double speed = 0;
     private double moveCounter = speed;
-    
 
     public SnakeEnvironment() {
     }
@@ -79,7 +79,14 @@ class SnakeEnvironment extends Environment {
         this.poisonBottle.add(getRandomGridLocation());
         this.poisonBottle.add(getRandomGridLocation());
         this.poisonBottle.add(getRandomGridLocation());
-        
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+        this.poisonBottle.add(getRandomGridLocation());
+
 
         this.portal = new ArrayList<Point>();
         this.portal.add(new Point(18, 20));
@@ -92,55 +99,58 @@ class SnakeEnvironment extends Environment {
 
     @Override
     public void timerTaskHandler() {
-        if (snake != null) {
+        if (this.gameState == gameState.RUNNING) {
+            if (snake != null) {
+                if (moveCounter <= 0) {
+                    snake.move();
+                    moveCounter = speed;
+                    checkSnakeIntersection();
 
-            if (moveCounter <= 0) {
-                snake.move();
-
-                moveCounter = speed;
-                checkSnakeIntersection();
-
-                if (snake.getDirection() == Direction.RIGHT) {
-                    if (snake.getHead().x >= this.grid.getColumns()) {
-                        snake.getHead().x = 0;
+                    if (snake.getDirection() == Direction.RIGHT) {
+                        if (snake.getHead().x >= this.grid.getColumns()) {
+                            snake.getHead().x = 0;
+                        }
+                    } else if (snake.getDirection() == Direction.LEFT) {
+                        if (snake.getHead().x <= -1) {
+                            snake.getHead().x = this.grid.getColumns() - 1;
+                        }
+                    } else if (snake.getDirection() == Direction.DOWN) {
+                        if (snake.getHead().y >= this.grid.getRows()) {
+                            snake.getHead().y = 0;
+                        }
+                    } else if (snake.getDirection() == Direction.UP) {
+                        if (snake.getHead().y < -1) {
+                            snake.getHead().y = this.grid.getRows() - 1;
+                        }
                     }
-                } else if (snake.getDirection() == Direction.LEFT) {
-                    if (snake.getHead().x <= -1) {
-                        snake.getHead().x = this.grid.getColumns() - 1;
-                    }
-                } else if (snake.getDirection() == Direction.DOWN) {
-                    if (snake.getHead().y >= this.grid.getRows()) {
-                        snake.getHead().y = 0;
-                    }
-                } else if (snake.getDirection() == Direction.UP) {
-                    if (snake.getHead().y < -1) {
-                        snake.getHead().y = this.grid.getRows() - 1;
-                    }
+                } else {
+                    moveCounter--;
                 }
-            } else {
-                moveCounter--;
             }
         }
     }
 
     @Override
     public void keyPressedHandler(KeyEvent e) {
-
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-           this.moveCounter = 0;
-        } if (e.getKeyCode() == KeyEvent.VK_W) {
+            if (gameState == GameState.RUNNING) {
+                gameState = GameState.PAUSED;
+            } else if (gameState == GameState.PAUSED) {
+                gameState = GameState.RUNNING;
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_W) {
             snake.setDirection(Direction.UP);
-            snake.move();
         } else if (e.getKeyCode() == KeyEvent.VK_S) {
             snake.setDirection(Direction.DOWN);
-            snake.move();
         } else if (e.getKeyCode() == KeyEvent.VK_A) {
             snake.setDirection(Direction.LEFT);
-            snake.move();
         } else if (e.getKeyCode() == KeyEvent.VK_D) {
             snake.setDirection(Direction.RIGHT);
-            snake.move();
+        } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            gameState = GameState.ENDED;
+
         }
+
     }
 
     @Override
@@ -192,7 +202,12 @@ class SnakeEnvironment extends Environment {
         graphics.drawString("Score: " + this.score, 50, 50);
 
 
+        if (gameState == gameState.ENDED) {
+            graphics.setColor(Color.RED);
+            graphics.setFont(new Font("Chalkboard", Font.BOLD, 100));
+            graphics.drawString("Game Over", 200, 300);
 
+        }
 
     }
 
@@ -200,11 +215,11 @@ class SnakeEnvironment extends Environment {
 
         for (int i = 0; i < this.apples.size(); i++) {
             if (snake.getHead().equals(this.apples.get(i))) {
-             this.score++;
-             snake.grow(2);
-             this.apples.get(i).x = (int) (Math.random() * this.grid.getColumns());
-             this.apples.get(i).y = (int) (Math.random() * this.grid.getRows());
-             System.out.println("Apple eaten!");
+                this.score++;
+                snake.grow(2);
+                this.apples.get(i).x = (int) (Math.random() * this.grid.getColumns());
+                this.apples.get(i).y = (int) (Math.random() * this.grid.getRows());
+                System.out.println("Apple eaten!");
             }
         }
 
@@ -214,7 +229,7 @@ class SnakeEnvironment extends Environment {
                 this.score--;
                 this.poisonBottle.get(i).x = (int) (Math.random() * this.grid.getColumns());
                 this.poisonBottle.get(i).y = (int) (Math.random() * this.grid.getRows());
-     
+
             }
         }
     }
