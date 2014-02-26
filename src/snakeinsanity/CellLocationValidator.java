@@ -4,11 +4,12 @@
  */
 package snakeinsanity;
 
+import java.awt.Point;
+
 /**
  *
  * @author liambrockley
  */
-public enum GameState {
-    
-    RUNNING,PAUSED,ENDED,SNEEZED, RunningTwo,RunningThree,RunningFour
+public interface CellLocationValidator {
+    public boolean validate(Point cellLocation);
 }

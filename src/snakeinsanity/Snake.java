@@ -17,9 +17,11 @@ import static snakeinsanity.Direction.UP;
 public class Snake {
 
     private ArrayList<Point> body;
+    //private ArrayList<>bodyWOHead;
     private Direction direction = Direction.RIGHT;
     private String string;
     private int growthCounter;
+    private GameState gameState = GameState.RUNNING;
     //   private final Point point;
 
     {
@@ -133,4 +135,50 @@ public class Snake {
     public void grow(int growth) {
         this.growthCounter += growth;
     }
+
+    public boolean checkSelfHit(){
+        for (int i = 1; i < body.size(); i++) {
+            if (getHead().equals(body.get(i))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return the gameState
+     */
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    /**
+     * @param gameState the gameState to set
+     */
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
 }
+
+
+
+
+
+    /**
+     * @return the bodyWOHead
+     */
+  //  public ArrayList<> getBodyWOHead() {
+    //    return bodyWOHead;
+   // }
+
+    /**
+     * @param bodyWOHead the bodyWOHead to set
+     */
+    //public void setBodyWOHead(ArrayList<> bodyWOHead) {
+     //   this.bodyWOHead = bodyWOHead;
+   // }
+
+
+    /**
+     * 
+     */

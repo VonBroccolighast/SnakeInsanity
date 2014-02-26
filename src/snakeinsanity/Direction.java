@@ -10,5 +10,4 @@ package snakeinsanity;
  */
 public enum Direction {
     UP,DOWN,RIGHT,LEFT
-
 }
