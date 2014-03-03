@@ -26,15 +26,15 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
 
     private GameState gameState = GameState.RUNNING;
     private RegionGrid grid;
-    private RegionGrid gridTwo;
     private int score = 0;
     private Snake snake;
-    private ArrayList<Point> apples;
-    private ArrayList<Point> poisonBottle;
+    private ArrayList<Point> jewels;
+    private ArrayList<Point> bomb;
     private ArrayList<Point> portal;
     private double speed = 0;
     private double moveCounter = speed;
     private ArrayList<Enemy> enemies;
+    private Boolean hasJewel = false;
 
     public SnakeEnvironment() {
     }
@@ -46,6 +46,7 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
         this.grid = new RegionGrid();
 
         this.setBackground(ResourceTools.loadImageFromResource("resources/Maya_Calendar_finalone.jpg"));
+        //    this.setBackgroundImagePosition();
 
         this.snake = new Snake();
         this.snake.getBody().add(new Point(5, 5));
@@ -53,35 +54,44 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
         this.snake.getBody().add(new Point(5, 3));
         this.snake.getBody().add(new Point(5, 2));
 
-      //  this.grid.setColor(Color.GRAY);
-        this.grid.setColor(new Color (160, 140, 140, 128));
+        //  this.grid.setColor(Color.GRAY);
+        this.grid.setColor(new Color(10, 10, 10, 110));
         this.grid.setInteriorColor(new Color(0, 0, 0, 0));
-        this.grid.setColumns(55);
-        this.grid.setRows(33);
-        this.grid.setCellHeight(15);
-        this.grid.setCellWidth(15);
-        this.grid.setPosition(new Point(50, 75));
+        this.grid.setColumns(65);
+        this.grid.setRows(42);
+        this.grid.setCellHeight(14);
+        this.grid.setCellWidth(14);
+        this.grid.setPosition(new Point(0, 0));
 
-        this.grid.setBottomOffset(5);
+        this.grid.setBottomOffset(12);
+        this.grid.setLeftOffset(this.grid.getBottomOffset() + 10);
+        this.grid.setRightOffset(this.grid.getBottomOffset() + 10);
+        this.grid.setTopOffset(this.grid.getBottomOffset());
 
-        this.apples = new ArrayList<Point>();
+
+
+        this.jewels = new ArrayList<Point>();
         for (int i = 0; i < 5; i++) {
-            this.apples.add(getRandomGridLocation());
+            this.jewels.add(getRandomGridLocation());
+
+            //make it unable to spawn on enemy or in interior grid
         }
 
-        this.poisonBottle = new ArrayList<Point>();
-        this.poisonBottle.add(getRandomGridLocation());
-        this.poisonBottle.add(getRandomGridLocation());
+        this.bomb = new ArrayList<Point>();
+        this.bomb.add(getRandomGridLocation());
+        this.bomb.add(getRandomGridLocation());
 
 
 
         this.enemies = new ArrayList<Enemy>();
         enemies.add(new Enemy(new Point(0, 0), this));
-        enemies.add(new Enemy(new Point(this.grid.getColumns() - 1, this.grid.getRows() - 1), this));
+        enemies.add(new Enemy(new Point(this.grid.getColumns() - 2, this.grid.getRows() - 2), this));
+
+
 
 
         this.portal = new ArrayList<Point>();
-        this.portal.add(new Point(18, 20));
+        this.portal.add(new Point(32, 20));
 
     }
 
@@ -172,18 +182,18 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
         if (this.grid != null) {
             this.grid.paintComponent(graphics);
 
-            if (this.apples != null) {
-                for (int i = 0; i < this.apples.size(); i++) {
-                    //GraphicsPalette.drawApple(graphics, this.grid.getCellPosition(this.apples.get(i)), this.grid.getCellSize());
+            if (this.jewels != null) {
+                for (int i = 0; i < this.jewels.size(); i++) {
+                    //GraphicsPalette.drawApple(graphics, this.grid.getCellPosition(this.jewels.get(i)), this.grid.getCellSize());
 
-                    //graphics.fillOval(this.apples.size(), this.apples.size(),this.grid.getCellWidth(), this.grid.getCellHeight());//( this.grid.getCellPosition(this.apples.get(i)), this.grid.getCellSize(), Color.GREEN);
-                    GraphicsPalette.drawDiamond(graphics, this.grid.getCellPosition(this.apples.get(i)), this.grid.getCellSize(), Color.GREEN);//graphics.fillOval(this.apples.size(), this.apples.size(),this.grid.getCellWidth(), this.grid.getCellHeight());//( this.grid.getCellPosition(this.apples.get(i)), this.grid.getCellSize(), Color.GREEN);
+                    //graphics.fillOval(this.jewels.size(), this.jewels.size(),this.grid.getCellWidth(), this.grid.getCellHeight());//( this.grid.getCellPosition(this.jewels.get(i)), this.grid.getCellSize(), Color.GREEN);
+                    GraphicsPalette.drawDiamond(graphics, this.grid.getCellPosition(this.jewels.get(i)), this.grid.getCellSize(), Color.GREEN);//graphics.fillOval(this.jewels.size(), this.jewels.size(),this.grid.getCellWidth(), this.grid.getCellHeight());//( this.grid.getCellPosition(this.jewels.get(i)), this.grid.getCellSize(), Color.GREEN);
                 }
             }
 
-            if (this.poisonBottle != null) {
-                for (int i = 0; i < this.poisonBottle.size(); i++) {
-                    GraphicsPalette.drawBomb(graphics, this.grid.getCellPosition(this.poisonBottle.get(i)), this.grid.getCellSize(), Color.BLACK);
+            if (this.bomb != null) {
+                for (int i = 0; i < this.bomb.size(); i++) {
+                    GraphicsPalette.drawBomb(graphics, this.grid.getCellPosition(this.bomb.get(i)), this.grid.getCellSize(), Color.BLACK);
 
                 }
             }
@@ -212,20 +222,20 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
             }
 
 
-            graphics.setColor(Color.RED);
-            graphics.setFont(new Font("Comic Sans", Font.ITALIC, 60));
+            graphics.setColor(Color.WHITE);
+            graphics.setFont(new Font("Copperplate", Font.BOLD, 60));
             graphics.drawString("Score: " + this.score, 50, 50);
 
 
             if (gameState == gameState.ENDED) {
                 graphics.setColor(Color.RED);
-                graphics.setFont(new Font("Chalkboard", Font.BOLD, 100));
+                graphics.setFont(new Font("Copperplate", Font.BOLD, 100));
                 graphics.drawString("Game Over", 200, 300);
 
             }
             if (gameState == gameState.PAUSED) {
                 graphics.setColor(Color.RED);
-                graphics.setFont(new Font("Chalkboard", Font.BOLD, 100));
+                graphics.setFont(new Font("Copperplate", Font.BOLD, 100));
                 graphics.drawString("Paused", 250, 300);
 
             }
@@ -243,67 +253,72 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
         }
 
 
-        for (int i = 0; i < this.apples.size(); i++) {
-            if (snake.getHead().equals(this.apples.get(i))) {
-                this.score++;
-                AudioPlayer.play("/resources/coin_flip.wav");
+        for (int i = 0; i < this.jewels.size(); i++) {
+            if (snake.getHead().equals(this.jewels.get(i))) {
+                this.jewels.get(i).x = (int) (Math.random() * this.grid.getColumns());
+                this.jewels.get(i).y = (int) (Math.random() * this.grid.getRows());
+                this.hasJewel = true;
                 snake.grow(2);
-                this.apples.get(i).x = (int) (Math.random() * this.grid.getColumns());
-                this.apples.get(i).y = (int) (Math.random() * this.grid.getRows());
+                AudioPlayer.play("/resources/coin_flip.wav");
+
+            } else {
+
+                this.hasJewel = false;
 
             }
         }
 
-        for (int i = 0; i < this.poisonBottle.size(); i++) {
-            if (snake.getHead().equals(this.poisonBottle.get(i))) {
+        for (int i = 0; i < this.bomb.size(); i++) {
+            if (snake.getHead().equals(this.bomb.get(i))) {
                 this.score = this.score - 2;
                 AudioPlayer.play("/resources/goddamnit.wav");
                 //   this.speed--;
-                this.poisonBottle.get(i).x = (int) (Math.random() * this.grid.getColumns());
-                this.poisonBottle.get(i).y = (int) (Math.random() * this.grid.getRows());
+                this.bomb.get(i).x = (int) (Math.random() * this.grid.getColumns());
+                this.bomb.get(i).y = (int) (Math.random() * this.grid.getRows());
             }
         }
+        for (int j = 0; j < this.portal.size(); j++) {
 
-        for (int enemy = 0; enemy < enemies.size(); enemy++) {
-            for (int snakePart = 0; snakePart < snake.getBody().size(); snakePart++) {
-                if (enemies.get(enemy).getCellLocation().equals(snake.getBody().get(snakePart))) {
-                    System.out.println("Enemy crash");
-                    this.gameState = GameState.ENDED;
+            if ((snake.getHead().equals(this.portal.get(j)) && (hasJewel=true))){ 
+                this.hasJewel = false;
+                this.score = this.score + 1;
+                AudioPlayer.play("/resources/coin2.wav");
+            }
+            
+       
+            if (this.hasJewel = true) {
+                System.out.println("yes jewel!");
+                //draw apple in front of snake head 
+            }
+
+
+
+            for (int enemy = 0; enemy < enemies.size(); enemy++) {
+                for (int snakePart = 0; snakePart < snake.getBody().size(); snakePart++) {
+                    if (enemies.get(enemy).getCellLocation().equals(snake.getBody().get(snakePart))) {
+                        System.out.println("Enemy crash");
+                        //  this.gameState = GameState.ENDED;
+                        AudioPlayer.play("/resources/goddamnit.wav");
+                        this.score = this.score - 1;
+                        this.snake.setBody(this.snake.getBody());
+
+                    }
                 }
             }
-        }
 
-//            for (enemies.contains(snake.getHead())) {
-//                for (this.snake.getBody()   ) {
-//
-//                    if (snake.getBody().equals(this.enemies)) {
-//                        AudioPlayer.play("/resources/goddamnit.wav");
-//                        this.gameState = gameState.ENDED;
-//
-//                    }
-//
-//                }
-//
-//                if (this.score <= -10) {
-//                    this.gameState = gameState.ENDED;
-//                    AudioPlayer.play("/resources/goddamnit.wav");
-//
-//                }
-//            }
-////
+
+
+            if (this.score <= -10) {
+                this.gameState = gameState.ENDED;
+                AudioPlayer.play("/resources/goddamnit.wav");
+
+            }
+        }
     }
 
-    //       public boolean intersects(Point location, ArrayList<Point> locations) {
-    //  for (int i = 0; i < locations.size(); i++) {
-    //    if (location.equals(locations.get(i))) {
-    //      return true;
-    //   }
-    //}
-    //    return false;
-//    }
-//}
     @Override
     public boolean validate(Point cellLocation) {
+
         if (grid != null) {
             //check if outside grid...
             if ((cellLocation.y >= this.grid.getRows()

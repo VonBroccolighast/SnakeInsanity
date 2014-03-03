@@ -35,8 +35,8 @@ public class Enemy {
     }
     
     public void paint(Graphics graphics, Point systemLocation, Point size){
-        graphics.fillOval(systemLocation.x, systemLocation.y, size.x, size.y);
-        
+       graphics.fillOval(systemLocation.x, systemLocation.y, size.x, size.y);
+        //graphics.drawImage("/resources/conquistador-armed.jpg", systemLocation.x, systemLocation.y, null);
     }
     
     
