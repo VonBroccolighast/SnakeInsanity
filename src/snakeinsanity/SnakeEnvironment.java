@@ -72,20 +72,25 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
 
         this.jewels = new ArrayList<Point>();
         for (int i = 0; i < 5; i++) {
-            this.jewels.add(getRandomGridLocation());
-
+            this.jewels.add(getRandomExteriorGridLocation());
             //make it unable to spawn on enemy or in interior grid
         }
 
-        this.bomb = new ArrayList<Point>();
-        this.bomb.add(getRandomGridLocation());
-        this.bomb.add(getRandomGridLocation());
+//        this.bomb = new ArrayList<Point>();
+//        this.bomb.add(getRandomGridLocation());
+//        this.bomb.add(getRandomGridLocation());
 
 
 
         this.enemies = new ArrayList<Enemy>();
         enemies.add(new Enemy(new Point(0, 0), this));
+        enemies.add(new Enemy(new Point(this.grid.getColumns() - 10, this.grid.getRows() - 10), this));
+        enemies.add(new Enemy(new Point (this.grid.getColumns() - 5, this.grid.getRows() - 10), this));
+        enemies.add(new Enemy(new Point(this.grid.getColumns(), this.grid.getRows() - 5), this));
+        enemies.add(new Enemy(new Point(0, 0), this));
         enemies.add(new Enemy(new Point(this.grid.getColumns() - 2, this.grid.getRows() - 2), this));
+        enemies.add(new Enemy(new Point (this.grid.getColumns() - 10, this.grid.getRows() - 10), this));
+        enemies.add(new Enemy(new Point(this.grid.getColumns() - 5, this.grid.getRows() - 5), this));
 
 
 
@@ -99,6 +104,18 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
         return new Point((int) (Math.random() * this.grid.getColumns()), (int) (Math.random() * this.grid.getRows()));
     }
 
+    private Point getRandomExteriorGridLocation() {
+        Point newPoint = new Point();
+        boolean invalid = true;
+        
+        do {
+            newPoint.setLocation(getRandomGridLocation());
+            invalid = grid.isInteriorCellLocation(newPoint);
+        } while (invalid);
+        
+        return newPoint;
+    }
+
     @Override
     public void timerTaskHandler() {
         if (this.gameState == gameState.RUNNING) {
@@ -109,8 +126,6 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
                     for (Enemy enemy : enemies) {
                         enemy.move();
                     }
-
-
 
                     moveCounter = speed;
                     checkSnakeIntersection();
@@ -164,9 +179,7 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
             if (snake.getDirection() != Direction.LEFT) {
                 snake.setDirection(Direction.RIGHT);
             }
-
         }
-
     }
 
     @Override
@@ -182,7 +195,7 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
         if (this.grid != null) {
             this.grid.paintComponent(graphics);
 
-            if (this.jewels != null) {
+            if (this.jewels != null){
                 for (int i = 0; i < this.jewels.size(); i++) {
                     //GraphicsPalette.drawApple(graphics, this.grid.getCellPosition(this.jewels.get(i)), this.grid.getCellSize());
 
@@ -255,41 +268,37 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
 
         for (int i = 0; i < this.jewels.size(); i++) {
             if (snake.getHead().equals(this.jewels.get(i))) {
-                this.jewels.get(i).x = (int) (Math.random() * this.grid.getColumns());
-                this.jewels.get(i).y = (int) (Math.random() * this.grid.getRows());
-                this.hasJewel = true;
-                snake.grow(2);
+                this.jewels.get(i).setLocation(getRandomExteriorGridLocation());
+                this.hasJewel = true;               
                 AudioPlayer.play("/resources/coin_flip.wav");
-
-            } else {
-
-                this.hasJewel = false;
-
+                System.out.println("Ate JEWEL");
             }
         }
 
-        for (int i = 0; i < this.bomb.size(); i++) {
-            if (snake.getHead().equals(this.bomb.get(i))) {
-                this.score = this.score - 2;
-                AudioPlayer.play("/resources/goddamnit.wav");
-                //   this.speed--;
-                this.bomb.get(i).x = (int) (Math.random() * this.grid.getColumns());
-                this.bomb.get(i).y = (int) (Math.random() * this.grid.getRows());
-            }
-        }
+//        for (int i = 0; i < this.bomb.size(); i++) {
+//            if (snake.getHead().equals(this.bomb.get(i))) {
+//                this.score = this.score - 2;
+//                AudioPlayer.play("/resources/goddamnit.wav");
+//                //   this.speed--;
+//                this.bomb.get(i).x = (int) (Math.random() * this.grid.getColumns());
+//                this.bomb.get(i).y = (int) (Math.random() * this.grid.getRows());
+//            }
+     //   }
+        
         for (int j = 0; j < this.portal.size(); j++) {
-
-            if ((snake.getHead().equals(this.portal.get(j)) && (hasJewel=true))){ 
+            if ((snake.getHead().equals(this.portal.get(j)) && (hasJewel))){ 
                 this.hasJewel = false;
+                snake.grow(2);
+                System.out.println("DROP JEWEL");
                 this.score = this.score + 1;
                 AudioPlayer.play("/resources/coin2.wav");
             }
             
        
-            if (this.hasJewel = true) {
-                System.out.println("yes jewel!");
-                //draw apple in front of snake head 
-            }
+//            if (this.hasJewel = true) {
+//                System.out.println("yes jewel!");
+//                //draw apple in front of snake head 
+//            }
 
 
 
@@ -297,6 +306,7 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
                 for (int snakePart = 0; snakePart < snake.getBody().size(); snakePart++) {
                     if (enemies.get(enemy).getCellLocation().equals(snake.getBody().get(snakePart))) {
                         System.out.println("Enemy crash");
+                        this.enemies.get(enemy).setCellLocation(getRandomExteriorGridLocation());
                         //  this.gameState = GameState.ENDED;
                         AudioPlayer.play("/resources/goddamnit.wav");
                         this.score = this.score - 1;
@@ -305,8 +315,6 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
                     }
                 }
             }
-
-
 
             if (this.score <= -10) {
                 this.gameState = gameState.ENDED;
