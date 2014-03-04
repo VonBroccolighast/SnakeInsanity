@@ -88,16 +88,26 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
         enemies.add(new Enemy(new Point(this.grid.getColumns() - 10, this.grid.getRows() - 10), this));
         //enemies.add(new Enemy(new Point(this.grid.getColumns() - 30, this.grid.getRows() - 10), this));
         enemies.add(new Enemy(new Point(this.grid.getColumns() - 50, this.grid.getRows() - 10), this));
-       // enemies.add(new Enemy(new Point(this.grid.getColumns() - 50, this.grid.getRows() - 30), this));
+        // enemies.add(new Enemy(new Point(this.grid.getColumns() - 50, this.grid.getRows() - 30), this));
         enemies.add(new Enemy(new Point(this.grid.getColumns() - 50, this.grid.getRows() - 30), this));
         //enemies.add(new Enemy(new Point(this.grid.getColumns() - 30, this.grid.getRows() - 30), this));
         enemies.add(new Enemy(new Point(this.grid.getColumns() - 10, this.grid.getRows() - 30), this));
-        
+
         this.wall = new ArrayList<Point>();
-         
-        this.wall.add(getRandomExteriorGridLocation());
-        
-        
+
+        this.wall.add(new Point(14, 15));
+        this.wall.add(new Point(14, 13));
+        this.wall.add(new Point(14, 14));
+        this.wall.add(new Point(14, 15));
+        this.wall.add(new Point(15, 15));
+        this.wall.add(new Point(15, 16));
+        this.wall.add(new Point(15, 17));
+        this.wall.add(new Point(14, 15));
+        this.wall.add(new Point(14, 16));
+        this.wall.add(new Point(14, 17));
+
+
+
 
 
 
@@ -224,10 +234,11 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
                     GraphicsPalette.enterPortal(graphics, this.grid.getCellPosition(this.portal.get(i)), this.grid.getCellSize(), Color.BLACK);
                 }
             }
-              if (this.wall != null) {
-                  graphics.setColor(Color.gray);
+            if (this.wall != null) {
+                graphics.setColor(Color.gray);
                 for (int i = 0; i < this.wall.size(); i++) {
-                    graphics.fill3DRect(200,200, 20, 75, true);
+                    graphics.fill3DRect(200, 200, 20, 75, true);
+                    //?? HOw does I makes this be in le walls?
                 }
             }
 //            grid.getCellPosition(null);
@@ -337,7 +348,7 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
                 }
             }
 
-            if (this.score <= -10) {
+            if (this.score <= -2) {
                 this.gameState = gameState.ENDED;
                 AudioPlayer.play("/resources/goddamnit.wav");
 
