@@ -71,7 +71,7 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
 
 
         this.jewels = new ArrayList<Point>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             this.jewels.add(getRandomExteriorGridLocation());
             //make it unable to spawn on enemy or in interior grid
         }
@@ -83,14 +83,11 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
 
 
         this.enemies = new ArrayList<Enemy>();
-        enemies.add(new Enemy(new Point(0, 0), this));
-        enemies.add(new Enemy(new Point(this.grid.getColumns() - 10, this.grid.getRows() - 10), this));
-        enemies.add(new Enemy(new Point (this.grid.getColumns() - 5, this.grid.getRows() - 10), this));
-        enemies.add(new Enemy(new Point(this.grid.getColumns(), this.grid.getRows() - 5), this));
-        enemies.add(new Enemy(new Point(0, 0), this));
-        enemies.add(new Enemy(new Point(this.grid.getColumns() - 2, this.grid.getRows() - 2), this));
-        enemies.add(new Enemy(new Point (this.grid.getColumns() - 10, this.grid.getRows() - 10), this));
-        enemies.add(new Enemy(new Point(this.grid.getColumns() - 5, this.grid.getRows() - 5), this));
+        
+        enemies.add(new Enemy(new Point(this.grid.getColumns()-10, this.grid.getRows()-10), this));
+        enemies.add(new Enemy(new Point (this.grid.getColumns() -30, this.grid.getRows() - 10), this));
+        enemies.add(new Enemy(new Point(this.grid.getColumns()-50, this.grid.getRows() - 10), this));
+        
 
 
 
@@ -268,8 +265,11 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
 
         for (int i = 0; i < this.jewels.size(); i++) {
             if (snake.getHead().equals(this.jewels.get(i))) {
-                this.jewels.get(i).setLocation(getRandomExteriorGridLocation());
-                this.hasJewel = true;               
+                this.jewels.get(i).setLocation 
+                        //in front of head
+                        (getRandomExteriorGridLocation());
+                this.hasJewel = true;
+                
                 AudioPlayer.play("/resources/coin_flip.wav");
                 System.out.println("Ate JEWEL");
             }
