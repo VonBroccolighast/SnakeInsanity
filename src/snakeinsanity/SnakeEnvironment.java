@@ -31,6 +31,7 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
     private ArrayList<Point> jewels;
     private ArrayList<Point> bomb;
     private ArrayList<Point> portal;
+    private ArrayList<Point> wall;
     private double speed = 0;
     private double moveCounter = speed;
     private ArrayList<Enemy> enemies;
@@ -83,11 +84,21 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
 
 
         this.enemies = new ArrayList<Enemy>();
+
+        enemies.add(new Enemy(new Point(this.grid.getColumns() - 10, this.grid.getRows() - 10), this));
+        //enemies.add(new Enemy(new Point(this.grid.getColumns() - 30, this.grid.getRows() - 10), this));
+        enemies.add(new Enemy(new Point(this.grid.getColumns() - 50, this.grid.getRows() - 10), this));
+       // enemies.add(new Enemy(new Point(this.grid.getColumns() - 50, this.grid.getRows() - 30), this));
+        enemies.add(new Enemy(new Point(this.grid.getColumns() - 50, this.grid.getRows() - 30), this));
+        //enemies.add(new Enemy(new Point(this.grid.getColumns() - 30, this.grid.getRows() - 30), this));
+        enemies.add(new Enemy(new Point(this.grid.getColumns() - 10, this.grid.getRows() - 30), this));
         
-        enemies.add(new Enemy(new Point(this.grid.getColumns()-10, this.grid.getRows()-10), this));
-        enemies.add(new Enemy(new Point (this.grid.getColumns() -30, this.grid.getRows() - 10), this));
-        enemies.add(new Enemy(new Point(this.grid.getColumns()-50, this.grid.getRows() - 10), this));
+        this.wall = new ArrayList<Point>();
+         
+        this.wall.add(getRandomExteriorGridLocation());
         
+        
+
 
 
 
@@ -104,12 +115,12 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
     private Point getRandomExteriorGridLocation() {
         Point newPoint = new Point();
         boolean invalid = true;
-        
+
         do {
             newPoint.setLocation(getRandomGridLocation());
             invalid = grid.isInteriorCellLocation(newPoint);
         } while (invalid);
-        
+
         return newPoint;
     }
 
@@ -192,7 +203,7 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
         if (this.grid != null) {
             this.grid.paintComponent(graphics);
 
-            if (this.jewels != null){
+            if (this.jewels != null) {
                 for (int i = 0; i < this.jewels.size(); i++) {
                     //GraphicsPalette.drawApple(graphics, this.grid.getCellPosition(this.jewels.get(i)), this.grid.getCellSize());
 
@@ -211,6 +222,12 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
             if (this.portal != null) {
                 for (int i = 0; i < this.portal.size(); i++) {
                     GraphicsPalette.enterPortal(graphics, this.grid.getCellPosition(this.portal.get(i)), this.grid.getCellSize(), Color.BLACK);
+                }
+            }
+              if (this.wall != null) {
+                  graphics.setColor(Color.gray);
+                for (int i = 0; i < this.wall.size(); i++) {
+                    graphics.fill3DRect(200,200, 20, 75, true);
                 }
             }
 //            grid.getCellPosition(null);
@@ -265,13 +282,17 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
 
         for (int i = 0; i < this.jewels.size(); i++) {
             if (snake.getHead().equals(this.jewels.get(i))) {
-                this.jewels.get(i).setLocation 
-                        //in front of head
+                this.jewels.get(i).setLocation //in front of head
                         (getRandomExteriorGridLocation());
                 this.hasJewel = true;
-                
+
                 AudioPlayer.play("/resources/coin_flip.wav");
                 System.out.println("Ate JEWEL");
+            }
+        }
+        for (int i = 0; i < this.wall.size(); i++) {
+            if (snake.getHead().equals(this.wall.get(i))) {
+                gameState = GameState.ENDED;
             }
         }
 
@@ -283,18 +304,18 @@ class SnakeEnvironment extends Environment implements CellLocationValidator {
 //                this.bomb.get(i).x = (int) (Math.random() * this.grid.getColumns());
 //                this.bomb.get(i).y = (int) (Math.random() * this.grid.getRows());
 //            }
-     //   }
-        
+        //   }
+
         for (int j = 0; j < this.portal.size(); j++) {
-            if ((snake.getHead().equals(this.portal.get(j)) && (hasJewel))){ 
+            if ((snake.getHead().equals(this.portal.get(j)) && (hasJewel))) {
                 this.hasJewel = false;
                 snake.grow(2);
                 System.out.println("DROP JEWEL");
                 this.score = this.score + 1;
                 AudioPlayer.play("/resources/coin2.wav");
             }
-            
-       
+
+
 //            if (this.hasJewel = true) {
 //                System.out.println("yes jewel!");
 //                //draw apple in front of snake head 
